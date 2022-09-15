@@ -28,6 +28,7 @@ import { store as editSiteStore } from './store';
 import EditSiteApp from './components/app';
 import getIsListPage from './utils/get-is-list-page';
 import ErrorBoundaryWarning from './components/error-boundary/warning';
+import AppV2 from './new';
 
 /**
  * Reinitializes the editor after the user chooses to reboot the editor after
@@ -141,7 +142,7 @@ export function reinitializeEditor( target, settings ) {
  * @param {string} id       ID of the root element to render the screen in.
  * @param {Object} settings Editor settings.
  */
-export function initializeEditor( id, settings ) {
+export function initializeEditorOld( id, settings ) {
 	settings.__experimentalFetchLinkSuggestions = ( search, searchOptions ) =>
 		fetchLinkSuggestions( search, searchOptions, settings );
 	settings.__experimentalFetchRichUrlData = fetchUrlData;
@@ -158,6 +159,13 @@ export function initializeEditor( id, settings ) {
 
 	reinitializeEditor( target, settings );
 }
+
+export function initializeEditorNew( id ) {
+	const target = document.getElementById( id );
+	render( <AppV2 />, target );
+}
+
+export const initializeEditor = initializeEditorNew;
 
 export { default as __experimentalMainDashboardButton } from './components/main-dashboard-button';
 export { default as __experimentalNavigationToggle } from './components/navigation-sidebar/navigation-toggle';

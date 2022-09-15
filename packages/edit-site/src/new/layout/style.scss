@@ -1,0 +1,22 @@
+.edit-site-new__layout {
+	background: $gray-900;
+	color: $white;
+	min-height: 100%;
+	display: flex;
+}
+
+.edit-site-new__sidebar {
+	width: $sidebar-width;
+}
+
+.edit-site-new__canvas-container {
+	flex-grow: 1;
+	padding: $grid-unit-30;
+}
+
+.edit-site-new__canvas {
+	background: $white;
+	color: $gray-900;
+	border-radius: $radius-block-ui;
+	min-height: 100%;
+}
