@@ -10,7 +10,13 @@ import { useCallback, useContext, useMemo } from '@wordpress/element';
 import SlotFillContext from './slot-fill-context';
 
 export default function useSlot( name ) {
-	const registry = useContext( SlotFillContext );
+	const {
+		updateSlot: registryUpdateSlot,
+		unregisterSlot: registryUnregisterSlot,
+		registerFill: registryRegisterFill,
+		unregisterFill: registryUnregisterFill,
+		...registry
+	} = useContext( SlotFillContext );
 
 	const slot = registry.slots[ name ] || {};
 	const slotFills = registry.fills[ name ];
@@ -18,30 +24,30 @@ export default function useSlot( name ) {
 
 	const updateSlot = useCallback(
 		( fillProps ) => {
-			registry.updateSlot( name, fillProps );
+			registryUpdateSlot( name, fillProps );
 		},
-		[ name, registry.updateSlot ]
+		[ name, registryUpdateSlot ]
 	);
 
 	const unregisterSlot = useCallback(
 		( slotRef ) => {
-			registry.unregisterSlot( name, slotRef );
+			registryUnregisterSlot( name, slotRef );
 		},
-		[ name, registry.unregisterSlot ]
+		[ name, registryUnregisterSlot ]
 	);
 
 	const registerFill = useCallback(
 		( fillRef ) => {
-			registry.registerFill( name, fillRef );
+			registryRegisterFill( name, fillRef );
 		},
-		[ name, registry.registerFill ]
+		[ name, registryRegisterFill ]
 	);
 
 	const unregisterFill = useCallback(
 		( fillRef ) => {
-			registry.unregisterFill( name, fillRef );
+			registryUnregisterFill( name, fillRef );
 		},
-		[ name, registry.unregisterFill ]
+		[ name, registryUnregisterFill ]
 	);
 
 	return {
