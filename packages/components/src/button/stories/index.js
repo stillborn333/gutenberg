@@ -66,7 +66,6 @@ function Template( { children, ...props } ) {
 export const Default = Template.bind( {} );
 Default.args = {
 	children: 'Code is poetry',
-	variant: undefined,
 };
 
 export const Icon = Template.bind( {} );
