@@ -495,18 +495,6 @@ function Navigation( {
 
 	const stylingInspectorControls = (
 		<InspectorControls>
-			<PanelBody title={ __( 'Navigation structure' ) }>
-				<BlockEditorProvider
-					value={ navigationInnerBlocks }
-					onChange={ onChange }
-					onInput={ onInput }
-				>
-					<ListView
-						blocks={ navigationInnerBlocks }
-						isExpanded={ true }
-					/>
-				</BlockEditorProvider>
-			</PanelBody>
 			{ hasSubmenuIndicatorSetting && (
 				<PanelBody title={ __( 'Display' ) }>
 					{ isResponsive && (
@@ -681,6 +669,16 @@ function Navigation( {
 							/* translators: %s: The name of a menu. */
 							actionLabel={ __( "Switch to '%s'" ) }
 						/>
+						<BlockEditorProvider
+							value={ navigationInnerBlocks }
+							onChange={ onChange }
+							onInput={ onInput }
+						>
+							<ListView
+								blocks={ navigationInnerBlocks }
+								isExpanded={ true }
+							/>
+						</BlockEditorProvider>
 						<Button
 							variant="link"
 							disabled={
@@ -762,6 +760,16 @@ function Navigation( {
 							/* translators: %s: The name of a menu. */
 							actionLabel={ __( "Switch to '%s'" ) }
 						/>
+						<BlockEditorProvider
+							value={ navigationInnerBlocks }
+							onChange={ onChange }
+							onInput={ onInput }
+						>
+							<ListView
+								blocks={ navigationInnerBlocks }
+								isExpanded={ true }
+							/>
+						</BlockEditorProvider>
 						<Button
 							variant="link"
 							disabled={
@@ -878,6 +886,16 @@ function Navigation( {
 							/* translators: %s: The name of a menu. */
 							actionLabel={ __( "Switch to '%s'" ) }
 						/>
+						<BlockEditorProvider
+							value={ navigationInnerBlocks }
+							onChange={ onChange }
+							onInput={ onInput }
+						>
+							<ListView
+								blocks={ navigationInnerBlocks }
+								isExpanded={ true }
+							/>
+						</BlockEditorProvider>
 						<Button
 							variant="link"
 							disabled={
