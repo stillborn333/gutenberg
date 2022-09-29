@@ -15,7 +15,6 @@ import {
 	__experimentalRecursionProvider as RecursionProvider,
 	__experimentalUseHasRecursion as useHasRecursion,
 	store as blockEditorStore,
-	BlockEditorProvider,
 	withColors,
 	PanelColorSettings,
 	ContrastChecker,
@@ -23,11 +22,7 @@ import {
 	Warning,
 	__experimentalUseBlockOverlayActive as useBlockOverlayActive,
 } from '@wordpress/block-editor';
-import {
-	useEntityBlockEditor,
-	EntityProvider,
-	store as coreStore,
-} from '@wordpress/core-data';
+import { EntityProvider, store as coreStore } from '@wordpress/core-data';
 
 import { useDispatch } from '@wordpress/data';
 import {
@@ -218,12 +213,6 @@ function Navigation( {
 		isResolvingCanUserCreateNavigationMenu,
 		hasResolvedCanUserCreateNavigationMenu,
 	} = useNavigationMenu( ref );
-
-	const [ navigationInnerBlocks, onInput, onChange ] = useEntityBlockEditor(
-		'postType',
-		'wp_navigation',
-		{ id: ref }
-	);
 
 	const navMenuResolvedButMissing =
 		hasResolvedNavigationMenus && isNavigationMenuMissing;
@@ -669,16 +658,7 @@ function Navigation( {
 							/* translators: %s: The name of a menu. */
 							actionLabel={ __( "Switch to '%s'" ) }
 						/>
-						<BlockEditorProvider
-							value={ navigationInnerBlocks }
-							onChange={ onChange }
-							onInput={ onInput }
-						>
-							<ListView
-								blocks={ navigationInnerBlocks }
-								isExpanded={ true }
-							/>
-						</BlockEditorProvider>
+						<ListView blocks={ innerBlocks } isExpanded={ true } />
 					</PanelBody>
 				</InspectorControls>
 				{ stylingInspectorControls }
@@ -748,16 +728,6 @@ function Navigation( {
 							/* translators: %s: The name of a menu. */
 							actionLabel={ __( "Switch to '%s'" ) }
 						/>
-						<BlockEditorProvider
-							value={ navigationInnerBlocks }
-							onChange={ onChange }
-							onInput={ onInput }
-						>
-							<ListView
-								blocks={ navigationInnerBlocks }
-								isExpanded={ true }
-							/>
-						</BlockEditorProvider>
 					</PanelBody>
 				</InspectorControls>
 				<Warning>
@@ -862,16 +832,7 @@ function Navigation( {
 							/* translators: %s: The name of a menu. */
 							actionLabel={ __( "Switch to '%s'" ) }
 						/>
-						<BlockEditorProvider
-							value={ navigationInnerBlocks }
-							onChange={ onChange }
-							onInput={ onInput }
-						>
-							<ListView
-								blocks={ navigationInnerBlocks }
-								isExpanded={ true }
-							/>
-						</BlockEditorProvider>
+						<ListView blocks={ innerBlocks } isExpanded={ true } />
 					</PanelBody>
 				</InspectorControls>
 				{ stylingInspectorControls }
