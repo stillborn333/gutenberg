@@ -147,6 +147,7 @@ export function FontSizeEdit( props ) {
 			onChange={ onChange }
 			value={ fontSizeValue }
 			withReset={ false }
+			withSlider
 			size="__unstable-large"
 			__nextHasNoMarginBottom
 		/>
