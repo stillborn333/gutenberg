@@ -54,6 +54,19 @@ const config: PlaywrightTestConfig = {
 		{
 			name: 'chromium',
 			use: { ...devices[ 'Desktop Chrome' ] },
+			grepInvert: /-chromium/,
+		},
+		{
+			name: 'webkit',
+			use: { ...devices[ 'Desktop Safari' ] },
+			grep: /@webkit/,
+			grepInvert: /-webkit/,
+		},
+		{
+			name: 'firefox',
+			use: { ...devices[ 'Desktop Firefox' ] },
+			grep: /@firefox/,
+			grepInvert: /-firefox/,
 		},
 	],
 };
