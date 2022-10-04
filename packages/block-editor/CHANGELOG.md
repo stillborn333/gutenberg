@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## New features
+
+-   You can now drop files/blocks/HTML on unmodified default blocks to transform them into relevant blocks ([#44647](https://github.com/WordPress/gutenberg/pull/44647)).
+
 ## 10.2.0 (2022-10-05)
 
 ## 10.1.0 (2022-09-21)
