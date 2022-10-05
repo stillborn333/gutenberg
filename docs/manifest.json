@@ -1224,6 +1224,12 @@
 		"parent": "components"
 	},
 	{
+		"title": "Theme",
+		"slug": "theme",
+		"markdown_source": "../packages/components/src/theme/README.md",
+		"parent": "components"
+	},
+	{
 		"title": "ToggleControl",
 		"slug": "toggle-control",
 		"markdown_source": "../packages/components/src/toggle-control/README.md",
