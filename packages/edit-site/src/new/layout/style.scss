@@ -7,16 +7,38 @@
 
 .edit-site-new__sidebar {
 	width: $sidebar-width;
+	padding: $grid-unit-20;
 }
 
 .edit-site-new__canvas-container {
 	flex-grow: 1;
 	padding: $grid-unit-30;
+	position: relative;
 }
 
 .edit-site-new__canvas {
 	background: $white;
 	color: $gray-900;
 	border-radius: $radius-block-ui;
+	position: absolute;
+	top: $grid-unit-30;
+	left: $grid-unit-30;
+	right: $grid-unit-30;
+	bottom: $grid-unit-30;
+	overflow-y: auto;
+}
+
+// This shouldn't be necessary (we should have a way to say that a skeletton is relative
+.edit-site-new__canvas .interface-interface-skeleton {
+	position: relative !important;
+	max-height: auto !important;
+	min-height: 100% !important;
+}
+.edit-site-new__canvas > div {
 	min-height: 100%;
+}
+.edit-site-new__canvas .interface-interface-skeleton__editor,
+.edit-site-new__canvas .interface-interface-skeleton__footer,
+.edit-site-new__canvas .interface-interface-skeleton__footer .block-editor-block-breadcrumb {
+	border-radius: $radius-block-ui $radius-block-ui;
 }

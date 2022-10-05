@@ -1,22 +1,31 @@
 /**
  * WordPress dependencies
  */
-import { __experimentalNavigatorScreen as NavigatorScreen } from '@wordpress/components';
+import {
+	__experimentalNavigatorScreen as NavigatorScreen,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import SiteIconAndTitle from '../site-icon-and-title';
-import TemplateList from '../template-list';
+import SidebarNavigation from '../sidebar-navigation';
 
 export function Sidebar() {
 	return (
-		<div className="edit-site-new__sidebar">
+		<VStack
+			className="edit-site-new__sidebar"
+			alignment="top"
+			// Seems like spacing={ 8 } doesn't work in Safari
+			// Probably breaks a lot of other spacing configs.
+			spacing="20px"
+		>
 			<SiteIconAndTitle />
 
-			<NavigatorScreen path="/templates">
-				<TemplateList />
+			<NavigatorScreen path="/navigation">
+				<SidebarNavigation />
 			</NavigatorScreen>
-		</div>
+		</VStack>
 	);
 }
