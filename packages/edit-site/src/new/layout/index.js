@@ -24,6 +24,10 @@ export default function Layout() {
 		[]
 	);
 
+	// Todo: ErrorBoundary component somewhere.
+	// Todo: Rethink WelcomeGuide (when to trigger...)
+	// Todo: Better "Title" for the browser window depending on the state (useTitle)
+
 	return (
 		<div
 			className={ classnames( 'edit-site-new__layout', {

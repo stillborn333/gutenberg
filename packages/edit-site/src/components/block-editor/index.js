@@ -19,6 +19,7 @@ import {
 	__unstableUseTypingObserver as useTypingObserver,
 	BlockEditorKeyboardShortcuts,
 	store as blockEditorStore,
+	BlockContextProvider,
 } from '@wordpress/block-editor';
 import { useMergeRefs, useViewportMatch } from '@wordpress/compose';
 import { ReusableBlocksMenuItems } from '@wordpress/reusable-blocks';
@@ -131,6 +132,27 @@ export default function BlockEditor( { setIsInserterOpen } ) {
 	const isTemplatePart = templateType === 'wp_template_part';
 	const hasBlocks = blocks.length !== 0;
 
+	const blockContext = useMemo(
+		() => ( {
+			...page?.context,
+			queryContext: [
+				page?.context.queryContext || { page: 1 },
+				( newQueryContext ) =>
+					setPage( {
+						...page,
+						context: {
+							...page?.context,
+							queryContext: {
+								...page?.context.queryContext,
+								...newQueryContext,
+							},
+						},
+					} ),
+			],
+		} ),
+		[ page?.context ]
+	);
+
 	return (
 		<BlockEditorProvider
 			settings={ settings }
@@ -139,62 +161,64 @@ export default function BlockEditor( { setIsInserterOpen } ) {
 			onChange={ onChange }
 			useSubRegistry={ false }
 		>
-			<TemplatePartConverter />
-			<__experimentalLinkControl.ViewerFill>
-				{ useCallback(
-					( fillProps ) => (
-						<NavigateToLink
-							{ ...fillProps }
-							activePage={ page }
-							onActivePageChange={ setPage }
-						/>
-					),
-					[ page ]
-				) }
-			</__experimentalLinkControl.ViewerFill>
-			<SidebarInspectorFill>
-				<BlockInspector />
-			</SidebarInspectorFill>
-			<BlockTools
-				className={ classnames( 'edit-site-visual-editor', {
-					'is-focus-mode': isTemplatePart,
-				} ) }
-				__unstableContentRef={ contentRef }
-				onClick={ ( event ) => {
-					// Clear selected block when clicking on the gray background.
-					if ( event.target === event.currentTarget ) {
-						clearSelectedBlock();
-					}
-				} }
-			>
-				<BlockEditorKeyboardShortcuts.Register />
-				<BackButton />
-				<ResizableEditor
-					// Reinitialize the editor and reset the states when the template changes.
-					key={ templateId }
-					enableResizing={
-						isTemplatePart &&
-						// Disable resizing in mobile viewport.
-						! isMobileViewport
-					}
-					settings={ settings }
-					contentRef={ mergedRefs }
-				>
-					<BlockList
-						className="edit-site-block-editor__block-list wp-site-blocks"
-						__experimentalLayout={ LAYOUT }
-						renderAppender={
-							isTemplatePart && hasBlocks ? false : undefined
-						}
-					/>
-				</ResizableEditor>
-				<__unstableBlockSettingsMenuFirstItem>
-					{ ( { onClose } ) => (
-						<BlockInspectorButton onClick={ onClose } />
+			<BlockContextProvider value={ blockContext }>
+				<TemplatePartConverter />
+				<__experimentalLinkControl.ViewerFill>
+					{ useCallback(
+						( fillProps ) => (
+							<NavigateToLink
+								{ ...fillProps }
+								activePage={ page }
+								onActivePageChange={ setPage }
+							/>
+						),
+						[ page ]
 					) }
-				</__unstableBlockSettingsMenuFirstItem>
-			</BlockTools>
-			<ReusableBlocksMenuItems />
+				</__experimentalLinkControl.ViewerFill>
+				<SidebarInspectorFill>
+					<BlockInspector />
+				</SidebarInspectorFill>
+				<BlockTools
+					className={ classnames( 'edit-site-visual-editor', {
+						'is-focus-mode': isTemplatePart,
+					} ) }
+					__unstableContentRef={ contentRef }
+					onClick={ ( event ) => {
+						// Clear selected block when clicking on the gray background.
+						if ( event.target === event.currentTarget ) {
+							clearSelectedBlock();
+						}
+					} }
+				>
+					<BlockEditorKeyboardShortcuts.Register />
+					<BackButton />
+					<ResizableEditor
+						// Reinitialize the editor and reset the states when the template changes.
+						key={ templateId }
+						enableResizing={
+							isTemplatePart &&
+							// Disable resizing in mobile viewport.
+							! isMobileViewport
+						}
+						settings={ settings }
+						contentRef={ mergedRefs }
+					>
+						<BlockList
+							className="edit-site-block-editor__block-list wp-site-blocks"
+							__experimentalLayout={ LAYOUT }
+							renderAppender={
+								isTemplatePart && hasBlocks ? false : undefined
+							}
+						/>
+					</ResizableEditor>
+					<__unstableBlockSettingsMenuFirstItem>
+						{ ( { onClose } ) => (
+							<BlockInspectorButton onClick={ onClose } />
+						) }
+					</__unstableBlockSettingsMenuFirstItem>
+				</BlockTools>
+				<ReusableBlocksMenuItems />
+			</BlockContextProvider>
 		</BlockEditorProvider>
 	);
 }
