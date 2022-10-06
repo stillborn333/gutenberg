@@ -496,3 +496,15 @@ export const switchEditorMode =
 			speak( __( 'Mosaic view selected' ), 'assertive' );
 		}
 	};
+
+/**
+ * Action that switches the canvas mode.
+ *
+ * @param {?string} mode Canvas mode.
+ */
+export function __unstableSetCanvasMode( mode ) {
+	return {
+		type: 'SET_CANVAS_MODE',
+		mode,
+	};
+}

@@ -183,6 +183,21 @@ export function listViewPanel( state = false, action ) {
 	return state;
 }
 
+/**
+ * Reducer used to track the site editor canvas mode (edit or view).
+ *
+ * @param {Object} state  Current state.
+ * @param {Object} action Dispatched action.
+ */
+function canvasMode( state = 'view', action ) {
+	switch ( action.type ) {
+		case 'SET_CANVAS_MODE':
+			return action.mode;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	deviceType,
 	settings,
@@ -191,4 +206,5 @@ export default combineReducers( {
 	navigationPanel,
 	blockInserterPanel,
 	listViewPanel,
+	canvasMode,
 } );

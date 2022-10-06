@@ -26,6 +26,7 @@ import {
 	VisuallyHidden,
 } from '@wordpress/components';
 import { store as keyboardShortcutsStore } from '@wordpress/keyboard-shortcuts';
+import { store as preferencesStore } from '@wordpress/preferences';
 import { store as editorStore } from '@wordpress/editor';
 import { store as coreStore } from '@wordpress/core-data';
 
@@ -47,7 +48,6 @@ const preventDefault = ( event ) => {
 export default function Header( {
 	openEntitiesSavedStates,
 	isEntitiesSavedStatesOpen,
-	showIconLabels,
 } ) {
 	const inserterButton = useRef();
 	const {
@@ -62,6 +62,7 @@ export default function Header( {
 		isVisualMode,
 		settings,
 		blockEditorMode,
+		showIconLabels,
 	} = useSelect( ( select ) => {
 		const {
 			__experimentalGetPreviewDeviceType,
@@ -97,6 +98,10 @@ export default function Header( {
 			isVisualMode: getEditorMode() === 'visual',
 			settings: getSettings(),
 			blockEditorMode: __unstableGetEditorMode(),
+			showIconLabels: select( preferencesStore ).get(
+				'core/edit-site',
+				'showIconLabels'
+			),
 		};
 	}, [] );
 

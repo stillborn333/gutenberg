@@ -1,34 +1,44 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
-import {
-	SlotFillProvider,
-	__experimentalNavigatorProvider as NavigatorProvider,
-} from '@wordpress/components';
-import { UnsavedChangesWarning } from '@wordpress/editor';
+import { useSelect } from '@wordpress/data';
+import { __unstableMotion as motion } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Sidebar } from '../sidebar';
-import Editor from '../../components/editor';
-import { Routes } from '../../components/routes';
+import Canvas from '../canvas';
+import { store as editSiteStore } from '../../store';
 
 export default function Layout() {
+	const { canvasMode } = useSelect(
+		( select ) => ( {
+			canvasMode: select( editSiteStore ).__unstableGetCanvasMode(),
+		} ),
+		[]
+	);
+
 	return (
-		<NavigatorProvider
-			className="edit-site-new__layout"
-			initialPath="/navigation"
+		<div
+			className={ classnames( 'edit-site-new__layout', {
+				'is-full-canvas': canvasMode === 'edit',
+			} ) }
 		>
-			<Sidebar />
-			<div className="edit-site-new__canvas-container">
-				<div className="edit-site-new__canvas">
-					<SlotFillProvider>
-						<UnsavedChangesWarning />
-						<Routes>{ () => <Editor /> }</Routes>
-					</SlotFillProvider>
-				</div>
+			<div className="edit-site-new__sidebar">
+				<Sidebar />
 			</div>
-		</NavigatorProvider>
+			<div className="edit-site-new__canvas-container">
+				{ /* todo: support reduced motion */ }
+				<motion.div className="edit-site-new__canvas" layout>
+					<Canvas />
+				</motion.div>
+			</div>
+		</div>
 	);
 }
