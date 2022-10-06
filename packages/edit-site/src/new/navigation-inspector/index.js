@@ -5,10 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { SelectControl } from '@wordpress/components';
 import { store as coreStore, useEntityBlockEditor } from '@wordpress/core-data';
-import {
-	store as blockEditorStore,
-	BlockEditorProvider,
-} from '@wordpress/block-editor';
+import { BlockEditorProvider } from '@wordpress/block-editor';
 import { speak } from '@wordpress/a11y';
 import { useInstanceId } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -22,19 +19,10 @@ const NAVIGATION_MENUS_QUERY = [ { per_page: -1, status: 'publish' } ];
 
 export default function NavigationInspector() {
 	const {
-		selectedNavigationBlockId,
-		clientIdToRef,
 		navigationMenus,
 		isResolvingNavigationMenus,
 		hasResolvedNavigationMenus,
-		firstNavigationBlockId,
 	} = useSelect( ( select ) => {
-		const {
-			__experimentalGetActiveBlockIdByBlockNames,
-			__experimentalGetGlobalBlocksByName,
-			getBlock,
-		} = select( blockEditorStore );
-
 		const { getEntityRecords, hasFinishedResolution, isResolving } =
 			select( coreStore );
 
@@ -45,20 +33,7 @@ export default function NavigationInspector() {
 		];
 
 		// Get the active Navigation block (if present).
-		const selectedNavId =
-			__experimentalGetActiveBlockIdByBlockNames( 'core/navigation' );
-
-		// Get all Navigation blocks currently within the editor canvas.
-		const navBlockIds =
-			__experimentalGetGlobalBlocksByName( 'core/navigation' );
-		const idToRef = {};
-		navBlockIds.forEach( ( id ) => {
-			idToRef[ id ] = getBlock( id )?.attributes?.ref;
-		} );
 		return {
-			selectedNavigationBlockId: selectedNavId,
-			firstNavigationBlockId: navBlockIds?.[ 0 ],
-			clientIdToRef: idToRef,
 			navigationMenus: getEntityRecords( ...navigationMenusQuery ),
 			isResolvingNavigationMenus: isResolving(
 				'getEntityRecords',
@@ -76,28 +51,13 @@ export default function NavigationInspector() {
 		'edit-site-navigation-inspector-menu'
 	);
 
-	const firstNavRefInTemplate = clientIdToRef[ firstNavigationBlockId ];
-	const firstNavigationMenuRef = navigationMenus?.[ 0 ]?.id;
-
-	// Default Navigation Menu is either:
-	// - the Navigation Menu referenced by the first Nav block within the template.
-	// - the first of the available Navigation Menus (`wp_navigation`) posts.
-	const defaultNavigationMenuId =
-		firstNavRefInTemplate || firstNavigationMenuRef;
+	// Default Navigation Menu is the first of the available Navigation Menus (`wp_navigation`) posts.
+	const defaultNavigationMenuId = navigationMenus?.[ 0 ]?.id;
 
 	// The Navigation Menu manually selected by the user within the Nav inspector.
 	const [ currentMenuId, setCurrentMenuId ] = useState(
-		firstNavRefInTemplate
+		defaultNavigationMenuId
 	);
-
-	// If a Nav block is selected within the canvas then set the
-	// Navigation Menu referenced by it's `ref` attribute  to be
-	// active within the Navigation sidebar.
-	useEffect( () => {
-		if ( selectedNavigationBlockId ) {
-			setCurrentMenuId( clientIdToRef[ selectedNavigationBlockId ] );
-		}
-	}, [ selectedNavigationBlockId ] );
 
 	let options = [];
 	if ( navigationMenus ) {

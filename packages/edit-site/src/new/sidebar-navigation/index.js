@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import NavigationInspector from '../../components/sidebar/navigation-menu-sidebar/navigation-inspector';
+import NavigationInspector from '../navigation-inspector';
 
 export default function SidebarNavigation() {
 	return (
