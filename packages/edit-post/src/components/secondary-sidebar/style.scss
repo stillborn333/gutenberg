@@ -45,3 +45,36 @@
 	// The table cells use an extra pixels of space left and right. We compensate for that here.
 	padding: $grid-unit-10 ($grid-unit-10 - $border-width - $border-width);
 }
+
+.edit-post-editor__list-view-overview {
+	position: absolute;
+	bottom: 0;
+	& > div > span:first-child {
+		width: 90px;
+		display: inline-block;
+	}
+	border-top: $border-width solid $gray-300;
+	width: calc(100% - #{ $grid-unit-40 });
+	margin-left: -($grid-unit-10 - $border-width - $border-width);
+	padding: $grid-unit-20;
+	& > div {
+		padding: 0 0 $grid-unit-10;
+		& > span {
+			font-size: $helptext-font-size;
+			line-height: $default-line-height;
+			color: $gray-700;
+		}
+	}
+}
+.edit-post-editor__list-view-panel-header {
+	ul {
+		width: calc(100% - #{ $grid-unit-50 });
+	}
+	li {
+		width: 50%;
+		& button {
+			width: 100%;
+		}
+	}
+
+}
