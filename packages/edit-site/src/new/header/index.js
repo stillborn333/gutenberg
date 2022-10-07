@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { __unstableAnimatePresence as AnimatePresence } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -18,5 +19,13 @@ export default function Header() {
 		[]
 	);
 
-	return canvasMode === 'view' ? <HeaderViewMode /> : <HeaderEditMode />;
+	return (
+		<AnimatePresence exitBeforeEnter={ true }>
+			{ canvasMode === 'view' ? (
+				<HeaderViewMode key="view" />
+			) : (
+				<HeaderEditMode key="edit" />
+			) }
+		</AnimatePresence>
+	);
 }
