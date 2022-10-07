@@ -58,13 +58,19 @@ const config: PlaywrightTestConfig = {
 		},
 		{
 			name: 'webkit',
-			use: { ...devices[ 'Desktop Safari' ] },
+			use: {
+				...devices[ 'Desktop Safari' ],
+				headless: ! process.env.CI,
+			},
 			grep: /@webkit/,
 			grepInvert: /-webkit/,
 		},
 		{
 			name: 'firefox',
-			use: { ...devices[ 'Desktop Firefox' ] },
+			use: {
+				...devices[ 'Desktop Firefox' ],
+				headless: ! process.env.CI,
+			},
 			grep: /@firefox/,
 			grepInvert: /-firefox/,
 		},
