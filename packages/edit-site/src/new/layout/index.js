@@ -27,6 +27,7 @@ export default function Layout() {
 	// Todo: ErrorBoundary component somewhere.
 	// Todo: Rethink WelcomeGuide (when to trigger...)
 	// Todo: Better "Title" for the browser window depending on the state (useTitle)
+	// Todo: Bring back the template list to the sidebar.
 
 	return (
 		<div
