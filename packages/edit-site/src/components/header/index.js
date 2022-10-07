@@ -45,10 +45,7 @@ const preventDefault = ( event ) => {
 	event.preventDefault();
 };
 
-export default function Header( {
-	openEntitiesSavedStates,
-	isEntitiesSavedStatesOpen,
-} ) {
+export default function Header() {
 	const inserterButton = useRef();
 	const {
 		deviceType,
@@ -142,7 +139,11 @@ export default function Header( {
 	const isZoomedOutView = blockEditorMode === 'zoom-out';
 
 	return (
-		<div className="edit-site-header">
+		<div
+			className={ classnames( 'edit-site-header', {
+				'show-icon-labels': showIconLabels,
+			} ) }
+		>
 			<NavigableToolbar
 				className="edit-site-header_start"
 				aria-label={ __( 'Document tools' ) }
@@ -275,10 +276,7 @@ export default function Header( {
 							</PreviewOptions>
 						</div>
 					) }
-					<SaveButton
-						openEntitiesSavedStates={ openEntitiesSavedStates }
-						isEntitiesSavedStatesOpen={ isEntitiesSavedStatesOpen }
-					/>
+					<SaveButton />
 					<PinnedItems.Slot scope="core/edit-site" />
 					<MoreMenu showIconLabels={ showIconLabels } />
 				</div>

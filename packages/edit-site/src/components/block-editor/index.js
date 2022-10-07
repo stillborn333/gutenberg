@@ -41,20 +41,21 @@ const LAYOUT = {
 	alignments: [],
 };
 
-export default function BlockEditor( { setIsInserterOpen } ) {
+export default function BlockEditor() {
+	const { setIsInserterOpened } = useDispatch( editSiteStore );
 	const { storedSettings, templateType, templateId, page } = useSelect(
 		( select ) => {
 			const { getSettings, getEditedPostType, getEditedPostId, getPage } =
 				select( editSiteStore );
 
 			return {
-				storedSettings: getSettings( setIsInserterOpen ),
+				storedSettings: getSettings( setIsInserterOpened ),
 				templateType: getEditedPostType(),
 				templateId: getEditedPostId(),
 				page: getPage(),
 			};
 		},
-		[ setIsInserterOpen ]
+		[ setIsInserterOpened ]
 	);
 
 	const settingsBlockPatterns =

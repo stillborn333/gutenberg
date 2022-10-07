@@ -1,17 +1,27 @@
 /**
  * WordPress dependencies
  */
-import { InterfaceSkeleton } from '@wordpress/interface';
-import { EditorNotices, EditorSnackbars } from '@wordpress/editor';
-import { useSelect } from '@wordpress/data';
+import {
+	store as interfaceStore,
+	InterfaceSkeleton,
+	ComplementaryArea,
+} from '@wordpress/interface';
+import {
+	EditorNotices,
+	EditorSnackbars,
+	EntitiesSavedStates,
+} from '@wordpress/editor';
+import { useSelect, useDispatch } from '@wordpress/data';
 import {
 	store as blockEditorStore,
 	BlockStyles,
 	BlockBreadcrumb,
 } from '@wordpress/block-editor';
-import { Notice } from '@wordpress/components';
+import { Notice, Button } from '@wordpress/components';
 import { store as coreStore, EntityProvider } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
+import { store as keyboardShortcutsStore } from '@wordpress/keyboard-shortcuts';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -22,10 +32,24 @@ import BlockEditor from '../../components/block-editor';
 import CodeEditor from '../../components/code-editor';
 import KeyboardShortcuts from '../../components/keyboard-shortcuts';
 import useInitEditedEntityFromURL from '../../components/use-init-edited-entity-from-url';
-import { GlobalStylesRenderer } from '../../components/editor/global-styles-renderer';
+import GlobalStylesRenderer from '../../components/global-styles-renderer';
 import { GlobalStylesProvider } from '../../components/global-styles/global-styles-provider';
 import ListViewSidebar from '../../components/secondary-sidebar/list-view-sidebar';
 import InserterSidebar from '../../components/secondary-sidebar/inserter-sidebar';
+import { SidebarComplementaryAreaFills } from '../../components/sidebar';
+
+const interfaceLabels = {
+	/* translators: accessibility text for the editor top bar landmark region. */
+	header: __( 'Editor top bar' ),
+	/* translators: accessibility text for the editor content landmark region. */
+	body: __( 'Editor content' ),
+	/* translators: accessibility text for the editor settings landmark region. */
+	sidebar: __( 'Editor settings' ),
+	/* translators: accessibility text for the editor publish landmark region. */
+	actions: __( 'Editor publish' ),
+	/* translators: accessibility text for the editor footer landmark region. */
+	footer: __( 'Editor footer' ),
+};
 
 export default function Canvas() {
 	// This ensures the edited entity id and type are initialized properly.
@@ -39,8 +63,12 @@ export default function Canvas() {
 		editorMode,
 		canvasMode,
 		blockEditorMode,
+		isRightSidebarOpen,
 		isInserterOpen,
 		isListViewOpen,
+		isSaveViewOpen,
+		previousShortcut,
+		nextShortcut,
 	} = useSelect( ( select ) => {
 		const {
 			getEditedPostType,
@@ -49,9 +77,14 @@ export default function Canvas() {
 			__unstableGetCanvasMode,
 			isInserterOpened,
 			isListViewOpened,
+			isSaveViewOpened,
 		} = select( editSiteStore );
 		const { hasFinishedResolution, getEntityRecord } = select( coreStore );
 		const { __unstableGetEditorMode } = select( blockEditorStore );
+		const { getAllShortcutKeyCombinations } = select(
+			keyboardShortcutsStore
+		);
+		const { getActiveComplementaryArea } = select( interfaceStore );
 		const postType = getEditedPostType();
 		const postId = getEditedPostId();
 
@@ -75,8 +108,35 @@ export default function Canvas() {
 			blockEditorMode: __unstableGetEditorMode(),
 			isInserterOpen: isInserterOpened(),
 			isListViewOpen: isListViewOpened(),
+			isSaveViewOpen: isSaveViewOpened(),
+			isRightSidebarOpen: getActiveComplementaryArea(
+				editSiteStore.name
+			),
+			previousShortcut: getAllShortcutKeyCombinations(
+				'core/edit-site/previous-region'
+			),
+			nextShortcut: getAllShortcutKeyCombinations(
+				'core/edit-site/next-region'
+			),
 		};
 	}, [] );
+	const { setIsSaveViewOpened } = useDispatch( editSiteStore );
+	const { enableComplementaryArea } = useDispatch( interfaceStore );
+
+	// Todo: Check whether this behavior is still relevant
+	// If yes, potentially move it into a hook or into the initFromURL hook.
+	useEffect(
+		function openGlobalStylesOnLoad() {
+			const searchParams = new URLSearchParams( window.location.search );
+			if ( searchParams.get( 'styles' ) === 'open' ) {
+				enableComplementaryArea(
+					'core/edit-site',
+					'edit-site/global-styles'
+				);
+			}
+		},
+		[ enableComplementaryArea ]
+	);
 
 	const isViewMode = canvasMode === 'view';
 	const isEditMode = canvasMode === 'edit';
@@ -85,12 +145,21 @@ export default function Canvas() {
 		isEditMode && showVisualEditor && blockEditorMode !== 'zoom-out';
 	const shouldShowInserter = isEditMode && showVisualEditor && isInserterOpen;
 	const shouldShowListView = isEditMode && showVisualEditor && isListViewOpen;
+	const secondarySidebarLabel = isListViewOpen
+		? __( 'List View' )
+		: __( 'Block Library' );
+	const isReady = editedPostType !== undefined && editedPostId !== undefined;
+
+	if ( ! isReady ) {
+		return null;
+	}
 
 	return (
 		<>
 			{ /* Check if the edit-site shortcuts still make sense and where we should register them
 			 A hook might also make more sense */ }
 			<KeyboardShortcuts.Register />
+			<SidebarComplementaryAreaFills />
 			<InterfaceSkeleton
 				header={ <Header /> }
 				notices={ isEditMode && <EditorSnackbars /> }
@@ -107,20 +176,14 @@ export default function Canvas() {
 							>
 								<div
 									// TODO: this only works in chrome right now
-									inert={ isViewMode ? 'true' : 'false' }
+									inert={ isViewMode ? 'true' : undefined }
 									style={ { height: '100%' } }
 								>
 									<EditorNotices />
 									{ /* todo: check what this component is fore */ }
 									<BlockStyles.Slot scope="core/block-inspector" />
 									{ showVisualEditor && editedPost && (
-										<BlockEditor
-											setIsInserterOpen={ () =>
-												console.log(
-													'todo: open inserter'
-												)
-											}
-										/>
+										<BlockEditor />
 									) }
 									{ editorMode === 'text' && editedPost && (
 										<CodeEditor />
@@ -135,13 +198,7 @@ export default function Canvas() {
 											) }
 										</Notice>
 									) }
-									<KeyboardShortcuts
-										openEntitiesSavedStates={ () =>
-											console.log(
-												'todo: what is this for'
-											)
-										}
-									/>
+									<KeyboardShortcuts />
 								</div>
 							</EntityProvider>
 						</EntityProvider>
@@ -151,11 +208,46 @@ export default function Canvas() {
 					( shouldShowInserter && <InserterSidebar /> ) ||
 					( shouldShowListView && <ListViewSidebar /> )
 				}
+				sidebar={
+					isRightSidebarOpen && (
+						<ComplementaryArea.Slot scope="core/edit-site" />
+					)
+				}
+				actions={
+					<>
+						{ isSaveViewOpen ? (
+							<EntitiesSavedStates
+								close={ () => setIsSaveViewOpened( false ) }
+							/>
+						) : (
+							<div className="edit-site-editor__toggle-save-panel">
+								<Button
+									variant="secondary"
+									className="edit-site-editor__toggle-save-panel-button"
+									onClick={ () =>
+										setIsSaveViewOpened( true )
+									}
+									aria-expanded={ false }
+								>
+									{ __( 'Open save panel' ) }
+								</Button>
+							</div>
+						) }
+					</>
+				}
 				footer={
 					showBlockBreakcrumb && (
 						<BlockBreadcrumb rootLabelText={ __( 'Template' ) } />
 					)
 				}
+				shortcuts={ {
+					previous: previousShortcut,
+					next: nextShortcut,
+				} }
+				labels={ {
+					...interfaceLabels,
+					secondarySidebar: secondarySidebarLabel,
+				} }
 			/>
 		</>
 	);

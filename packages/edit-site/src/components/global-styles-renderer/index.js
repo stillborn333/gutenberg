@@ -43,7 +43,7 @@ function useGlobalStylesRenderer() {
 	}, [ styles, settings ] );
 }
 
-export function GlobalStylesRenderer() {
+export default function GlobalStylesRenderer() {
 	useGlobalStylesRenderer();
 
 	return null;

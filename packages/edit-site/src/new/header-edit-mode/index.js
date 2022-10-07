@@ -23,11 +23,7 @@ export default function HeaderEditMode() {
 			>
 				<SiteIconAndTitle showTitle={ false } />
 			</Button>
-			<EditorToolbars
-				openEntitiesSavedStates={ () =>
-					console.log( 'todo: open entities panel' )
-				}
-			/>
+			<EditorToolbars />
 		</HStack>
 	);
 }
