@@ -13,19 +13,58 @@ class WP_Block_Supports_Typography_Test extends WP_UnitTestCase {
 	private $test_block_name;
 
 	/**
+	 * Stores the current test theme root.
+	 *
+	 * @var string|null
+	 */
+	private $theme_root;
+
+	/**
+	 * Caches the original theme directory global value in order
+	 * to restore it in tear down.
+	 *
+	 * @var string|null
+	 */
+	private $orig_theme_dir;
+
+	/**
 	 * Sets up tests.
 	 */
 	public function set_up() {
 		parent::set_up();
+
 		$this->test_block_name = null;
+
+		// Sets up the `wp-content/themes/` directory to ensure consistency when running tests.
+		$this->theme_root                = realpath( __DIR__ . '/../data/themedir1' );
+		$this->orig_theme_dir            = $GLOBALS['wp_theme_directories'];
+		$GLOBALS['wp_theme_directories'] = array( WP_CONTENT_DIR . '/themes', $this->theme_root );
+
+		$theme_root_callback = function () {
+			return $this->theme_root;
+		};
+		add_filter( 'theme_root', $theme_root_callback );
+		add_filter( 'stylesheet_root', $theme_root_callback );
+		add_filter( 'template_root', $theme_root_callback );
+
+		// Clear caches.
+		wp_clean_themes_cache();
+		unset( $GLOBALS['wp_themes'] );
 	}
 
 	/**
 	 * Tears down tests.
 	 */
 	public function tear_down() {
+		// Restores the original theme directory setup.
+		$GLOBALS['wp_theme_directories'] = $this->orig_theme_dir;
+		wp_clean_themes_cache();
+		unset( $GLOBALS['wp_themes'] );
 		unregister_block_type( $this->test_block_name );
+
+		// Resets test block name.
 		$this->test_block_name = null;
+
 		parent::tear_down();
 	}
 
@@ -363,6 +402,79 @@ class WP_Block_Supports_Typography_Test extends WP_UnitTestCase {
 				),
 				'should_use_fluid_typography' => true,
 				'expected_output'             => 'clamp(21px, 1.3125rem + ((1vw - 7.68px) * 7.091), 80px)',
+			),
+		);
+	}
+
+	/**
+	 * Tests that custom font sizes are converted to fluid values
+	 * in inline block supports styles,
+	 * when "settings.typography.fluid" is set to `true`.
+	 *
+	 * @covers ::gutenberg_register_typography_support
+	 *
+	 * @dataProvider data_generate_block_supports_font_size_fixtures
+	 *
+	 * @param string $font_size_value             The block supports custom font size value.
+	 * @param bool   $should_use_fluid_typography An override to switch fluid typography "on". Can be used for unit testing.
+	 * @param string $expected_output             Expected value of style property from gutenberg_apply_typography_support().
+	 */
+	public function test_should_covert_font_sizes_to_fluid_values( $font_size_value, $should_use_fluid_typography, $expected_output ) {
+		if ( $should_use_fluid_typography ) {
+			switch_theme( 'block-theme-child-with-fluid-typography' );
+		} else {
+			switch_theme( 'default' );
+		}
+
+		$this->test_block_name = 'test/font-size-fluid-value';
+		register_block_type(
+			$this->test_block_name,
+			array(
+				'api_version' => 2,
+				'attributes'  => array(
+					'style' => array(
+						'type' => 'object',
+					),
+				),
+				'supports'    => array(
+					'typography' => array(
+						'fontSize' => true,
+					),
+				),
+			)
+		);
+		$registry         = WP_Block_Type_Registry::get_instance();
+		$block_type       = $registry->get_registered( $this->test_block_name );
+		$block_attributes = array(
+			'style' => array(
+				'typography' => array(
+					'fontSize' => $font_size_value,
+				),
+			),
+		);
+
+		$actual   = gutenberg_apply_typography_support( $block_type, $block_attributes );
+		$expected = array( 'style' => $expected_output );
+
+		$this->assertSame( $expected, $actual );
+	}
+
+	/**
+	 * Data provider for test_should_covert_font_sizes_to_fluid_values.
+	 *
+	 * @return array
+	 */
+	public function data_generate_block_supports_font_size_fixtures() {
+		return array(
+			'default_return_value'               => array(
+				'font_size_value'             => '50px',
+				'should_use_fluid_typography' => false,
+				'expected_output'             => 'font-size:50px;',
+			),
+			'return_value_with_fluid_typography' => array(
+				'font_size_value'             => '50px',
+				'should_use_fluid_typography' => true,
+				'expected_output'             => 'font-size:clamp(37.5px, 2.34375rem + ((1vw - 7.68px) * 4.507), 75px);',
 			),
 		);
 	}
