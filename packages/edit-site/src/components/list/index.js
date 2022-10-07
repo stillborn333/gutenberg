@@ -18,7 +18,6 @@ import { EditorSnackbars } from '@wordpress/editor';
  */
 import useRegisterShortcuts from './use-register-shortcuts';
 import Header from './header';
-import NavigationSidebar from '../navigation-sidebar';
 import Table from './table';
 import { store as editSiteStore } from '../../store';
 import { useLocation } from '../routes';
@@ -83,7 +82,6 @@ export default function List() {
 				...detailedRegionLabels,
 			} }
 			header={ <Header templateType={ templateType } /> }
-			drawer={ <NavigationSidebar.Slot /> }
 			notices={ <EditorSnackbars /> }
 			content={ <Table templateType={ templateType } /> }
 			shortcuts={ {

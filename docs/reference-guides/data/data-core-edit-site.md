@@ -18,19 +18,6 @@ _Returns_
 
 -   `Object`: Whether the current user can create media or not.
 
-### getCurrentTemplateNavigationPanelSubMenu
-
-Returns the current template or template part's corresponding
-navigation panel's sub menu, to be used with `openNavigationPanelToMenu`.
-
-_Parameters_
-
--   _state_ `Object`: Global application state.
-
-_Returns_
-
--   `string`: The current template or template part's sub menu.
-
 ### getCurrentTemplateTemplateParts
 
 Returns the template parts and their blocks for the current edited template.
@@ -90,18 +77,6 @@ _Parameters_
 _Returns_
 
 -   `number?`: Home template ID.
-
-### getNavigationPanelActiveMenu
-
-Returns the active menu in the navigation panel.
-
-_Parameters_
-
--   _state_ `Object`: Global application state.
-
-_Returns_
-
--   `string`: Active menu.
 
 ### getPage
 
@@ -176,18 +151,6 @@ _Parameters_
 _Returns_
 
 -   `boolean`: True if the list view panel should be open; false if closed.
-
-### isNavigationOpened
-
-Returns the current opened/closed state of the navigation panel.
-
-_Parameters_
-
--   _state_ `Object`: Global application state.
-
-_Returns_
-
--   `boolean`: True if the navigation panel should be open; false if closed.
 
 ### isSaveViewOpened
 
