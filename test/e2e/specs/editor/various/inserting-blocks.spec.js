@@ -9,7 +9,7 @@ test.use( {
 	},
 } );
 
-test.describe( 'Inserting blocks (@firefox, @webkit)', () => {
+test.describe.only( 'Inserting blocks (@firefox, @webkit)', () => {
 	test.beforeEach( async ( { admin } ) => {
 		await admin.createNewPost();
 	} );

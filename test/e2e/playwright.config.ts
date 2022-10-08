@@ -14,7 +14,7 @@ const config: PlaywrightTestConfig = {
 	reporter: process.env.CI
 		? [ [ 'github' ], [ './config/flaky-tests-reporter.ts' ] ]
 		: 'list',
-	forbidOnly: !! process.env.CI,
+	// forbidOnly: !! process.env.CI,
 	workers: 1,
 	retries: process.env.CI ? 2 : 0,
 	timeout: parseInt( process.env.TIMEOUT || '', 10 ) || 100_000, // Defaults to 100 seconds.
@@ -67,10 +67,7 @@ const config: PlaywrightTestConfig = {
 		},
 		{
 			name: 'firefox',
-			use: {
-				...devices[ 'Desktop Firefox' ],
-				headless: ! process.env.CI,
-			},
+			use: { ...devices[ 'Desktop Firefox' ] },
 			grep: /@firefox/,
 			grepInvert: /-firefox/,
 		},
